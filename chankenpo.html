@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>가위바위보</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #3a3a5f);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      padding-top: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      top: 0;
+    }
+
+    .game-box {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      width: 420px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      margin-top: 60px;
+    }
+
+    .log-box {
+      width: 300px;
+      height: 400px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.4);
+      border-radius: 15px;
+      padding: 15px;
+      margin-top: 60px;
+    }
+    .log-box::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    /* 스크롤 배경 */
+    .log-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* 움직이는 바 */
+    .log-box::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    /* 호버 시 */
+    .log-box::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .log-box h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #aaa;
+      padding-bottom: 5px;
+    }
+
+    .log {
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 5px;
+    }
+
+    #aiChoice { font-size: 22px; margin-bottom: 15px; color: #ffd369; }
+    #status { font-size: 18px; margin-bottom: 20px; color: #aaa; }
+
+    .buttons button {
+      font-size: 26px;
+      margin: 10px;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .buttons button:hover { transform: scale(1.1); }
+
+    .scissors { background: #ff6b6b; }
+    .paper { background: #4ecdc4; }
+    .rock { background: #5f6caf; }
+
+    #result { margin-top: 20px; font-size: 22px; min-height: 50px; }
+    #score { margin-top: 15px; font-size: 16px; color: #ddd; }
+  </style>
+</head>
+<body>
+
+<h1>✊✌️✋ 가위바위보</h1>
+
+<div class="game-box">
+  <div id="aiChoice">AI 행동 대기중</div>
+  <div id="status">행동을 골라주세요</div>
+
+  <div class="buttons">
+    <button class="scissors" onclick="play(1)">✌️</button>
+    <button class="paper" onclick="play(2)">✋</button>
+    <button class="rock" onclick="play(3)">✊</button>
+  </div>
+
+  <div id="result"></div>
+  <div id="score">승: 0 | 패: 0 | 무: 0</div>
+</div>
+
+<div class="log-box">
+  <h2>📜 로그</h2>
+  <div id="logs"></div>
+</div>
+
+<script>
+  let win = 0, lose = 0, draw = 0;
+  let ai = 0, announcedAi = 0;
+
+  const choices = ["", "가위", "보", "바위"];
+
+  function addLog(text) {
+    const logDiv = document.getElementById("logs");
+    const newLog = document.createElement("div");
+    newLog.className = "log";
+    newLog.innerHTML = text;
+
+    logDiv.prepend(newLog); // 최신이 위로
+  }
+
+  function newRound() {
+    announcedAi = Math.floor(Math.random() * 3) + 1;
+    ai = announcedAi;
+
+    document.getElementById("aiChoice").innerText =
+      `AI는 현재 ${choices[announcedAi]}을 낼 준비를 하고있다!`;
+    document.getElementById("status").innerText = "당신의 차례다";
+  }
+
+  function play(user) {
+    toggleButtons(false);
+
+    document.getElementById("status").innerText =
+      "AI는 다른 행동을 할지 생각하고 있다";
+
+    setTimeout(() => {
+      if (Math.random() < 0.7) {
+        let newAi;
+        do {
+          newAi = Math.floor(Math.random() * 3) + 1;
+        } while (newAi === ai);
+        ai = newAi;
+      }
+
+      let resultText = `ai의  ${choices[ai]}! / 당신의 ${choices[user]}! <br>`;
+      let resultText1 = `ai의  ${choices[ai]}! / 당신의 ${choices[user]}! <br>`;
+      if (ai === user) {
+        draw++;
+        resultText += "비겼다. 왜지";
+        resultText1 += "비겼다.";
+      } else if (
+        (user === 1 && ai === 2) ||
+        (user === 2 && ai === 3) ||
+        (user === 3 && ai === 1)
+      ) {
+        win++;
+        resultText += "이겼다. 왜지";
+        resultText1 += "이겼다.";
+      } else {
+        lose++;
+        resultText += "졌다. 왜지";
+        resultText1 += "졌다.";
+      }
+
+      addLog(resultText1);
+
+      document.getElementById("result").innerHTML = resultText;
+      document.getElementById("score").innerText =
+        `승: ${win} | 패: ${lose} | 무: ${draw}`;
+
+      setTimeout(() => {
+        newRound();
+        document.getElementById("result").innerHTML = "";
+        toggleButtons(true);
+      }, 1000);
+
+    }, 1100);
+  }
+
+  function toggleButtons(enable) {
+    document.querySelectorAll("button")
+      .forEach(btn => btn.disabled = !enable);
+  }
+
+  newRound();
+</script>
+
+</body>
+</html>
