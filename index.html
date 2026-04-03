@@ -97,6 +97,29 @@
 
     #result { margin-top: 20px; font-size: 22px; min-height: 50px; }
     #score { margin-top: 15px; font-size: 16px; color: #ddd; }
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    
+      text-align: center;
+      padding: 10px 0;
+    
+      background: rgba(0, 0, 0, 0.4); 
+      backdrop-filter: blur(5px);  
+    
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    footer {
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0)
+      );
+    }
   </style>
 </head>
 <body>
@@ -121,7 +144,9 @@
   <h2>📜 로그</h2>
   <div id="logs"></div>
 </div>
-
+<footer>
+  tip:그거 알고 계신가요? 이 AI는 70%로 다른걸 낸답니다!
+</footer>
 <script>
   let win = 0, lose = 0, draw = 0;
   let ai = 0, announcedAi = 0;
